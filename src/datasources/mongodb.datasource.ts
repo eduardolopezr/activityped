@@ -4,11 +4,11 @@ import {juggler} from '@loopback/repository';
 const config = {
   name: 'mongodb',
   connector: 'mongodb',
-  url: 'mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false',
+  url: 'mongodb://elopez:aE06a9WaonIidA@147.182.187.121:27017/elopez_production?authSource=admin',
   host: 'localhost',
   port: 27017,
-  user: '',
-  password: '',
+  user: 'elopez',
+  password: 'aE06a9WaonIidA',
   database: 'coupon',
   useNewUrlParser: true
 };

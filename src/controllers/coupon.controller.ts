@@ -13,15 +13,16 @@ import {
 } from '@loopback/rest';
 import {Coupon} from '../models';
 import {CouponRepository} from '../repositories';
-
 export class CouponController {
   constructor(
+    /*@inject('service.serviceb')
+    protected serviceb:Serviceb,*/
     @repository(CouponRepository)
     public couponRepository : CouponRepository,
   ) {}
     /*---------------------------------------------------------------*/
     @get('/coupons/descuentoZona1y2/{Zona}&{PrecioInicial}&{MetodoDePago}&{Coupon}')
-    async CalcularPrecioZona1y2(
+    async DescuentoZona1y2(
       @param.path.number('Zona') Zona: number,
       @param.path.number('PrecioInicial') PrecioInicial: number,
       @param.path.string('MetodoDePago') MetodoDePago: string,
@@ -50,7 +51,7 @@ export class CouponController {
       return precioFinal;
     }
     @get('/coupons/descuentoZona5/{Zona}&{PrecioInicial}&{MetodoDePago}')
-    async CalcularPrecioZona5(
+    async DescuentoZona5(
       @param.path.number('Zona') Zona: number,
       @param.path.number('PrecioInicial') PrecioInicial: number,
       @param.path.string('MetodoDePago') MetodoDePago: string
@@ -73,7 +74,7 @@ export class CouponController {
       return precioFinal;
     }
     @get('/coupons/descuentoZona3/{Zona}&{PrecioInicial}&{MetodoDePago}')
-    async CalcularPrecioZona3(
+    async DescuentoZona3(
       @param.path.number('Zona') Zona: number,
       @param.path.number('PrecioInicial') PrecioInicial: number,
       @param.path.string('MetodoDePago') MetodoDePago: string
@@ -95,8 +96,8 @@ export class CouponController {
 
       return precioFinal;
     }
-    @get('/coupons/descuentoZona4/{Zona}&{PrecioInicial}&{MetodoDePago}')
-    async EnvioGratis4(
+    @get('/coupons/envioGratisZona4/{Zona}&{PrecioInicial}&{MetodoDePago}')
+    async EnvioGratisZona4(
       @param.path.number('Zona') Zona: number,
       @param.path.number('PrecioInicial') PrecioInicial: number,
       @param.path.string('MetodoDePago') MetodoDePago: string
@@ -111,7 +112,7 @@ export class CouponController {
 
       return envioGratis;
     }
-    @get('/coupons/descuentoZona4/{Zona}&{PrecioInicial}')
+    @get('/coupons/envioGratis/{Zona}&{PrecioInicial}')
     async envioGratis (
       @param.path.number('Zona') Zona: number,
       @param.path.number('PrecioInicial') PrecioInicial: number,
@@ -128,8 +129,8 @@ export class CouponController {
       return envioGratis;
     }
 
-    @get('/coupons/descuentoZona1y2/{Zona}&{PrecioInicial}&{MetodoDePago}&{Coupon}')
-    async CalcularPrecioUltimo(
+    @get('/coupons/descuentoPerritoFeliNojado/{Zona}&{PrecioInicial}&{MetodoDePago}&{Coupon}')
+    async DescuentoPerritoFeliNojado(
       @param.path.number('Zona') Zona: number,
       @param.path.number('PrecioInicial') PrecioInicial: number,
       @param.path.string('MetodoDePago') MetodoDePago: string,

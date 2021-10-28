@@ -13,7 +13,7 @@ export class Coupon extends Entity {
     type: 'number',
     required: true,
   })
-  decuento: number;
+  descuento: number;
   @property({
     type: 'number',
     required: true,
