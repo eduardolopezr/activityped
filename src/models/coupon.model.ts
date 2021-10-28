@@ -24,7 +24,11 @@ export class Coupon extends Entity {
     required: true,
   })
   nombreCoupon: string;
-
+  @property({
+    type: 'string',
+    required: true,
+  })
+  metodoPago: string;
   @property({
     type: 'number',
     required: true,
@@ -42,6 +46,8 @@ export class Coupon extends Entity {
     required: true,
   })
   usos: number;
+
+
 
   // Define well-known properties here
 
