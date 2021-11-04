@@ -88,7 +88,7 @@ export class CouponController {
       return InfoDescuento;
     }
     /*---------------------------------------------------------------*/
-    /*---------------------------------------------------------------*/
+    /*
     @get('/coupons/descuentoZona1y2/{Zona}&{PrecioInicial}&{MetodoDePago}&{Coupon}')
     async DescuentoZona1y2(
       @param.path.number('Zona') Zona: number,
@@ -226,7 +226,7 @@ export class CouponController {
 
       return precioFinal;
     }
-    /*---------------------------------------------------------------*/
+    */
 
   @post('/coupons')
   @response(200, {
