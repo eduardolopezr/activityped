@@ -21,6 +21,74 @@ export class CouponController {
     public couponRepository : CouponRepository,
   ) {}
     /*---------------------------------------------------------------*/
+    @get('/coupons/descuentoPorZona/{zona}&{precioInicial}&{metodoDePago}&{coupon}')
+    async DescuentoPorZona(
+      @param.path.number('zona') zona: number,
+      @param.path.number('precioInicial') precioInicial: number,
+      @param.path.string('metodoDePago') metodoDePago: string,
+      @param.path.string('coupon') coupon: string
+    ): Promise<Object> {
+
+      let descuento =0;
+      let precioFinal =0;
+      let envioGratis =false;
+      if(precioInicial>10000)
+      {
+        envioGratis =true;
+      }
+
+      if((zona==1||zona==2) && metodoDePago=="paypal" && coupon=="MASTER20")
+      {
+        descuento =  precioInicial*.15;
+        precioFinal = precioInicial-descuento;
+      }
+      else if((zona==1||zona==2) && metodoDePago=="mastercard" && coupon=="MASTER20")
+      {
+        descuento =  precioInicial*.20;
+        precioFinal = precioInicial-descuento;
+      }
+      else if(zona==5 && metodoDePago=="mastercard")
+      {
+        descuento =  precioInicial*.10;
+        precioFinal = precioInicial-descuento;
+      }
+      else if(zona==3 && metodoDePago=="visa" && precioInicial>4000)
+      {
+        descuento =  precioInicial*.15;
+        precioFinal = precioInicial-descuento;
+      }
+      else if(zona==4 && metodoDePago=="mastercard" && precioInicial>3000)
+      {
+        envioGratis=true;
+      }
+      else if((zona==1||zona==2||zona==3) && (metodoDePago=="paypal"||metodoDePago=="mastercard") && coupon=="PERRITOFELI")
+      {
+        descuento =  precioInicial*.15;
+        precioFinal = precioInicial-descuento;
+      }
+      else if((zona==4||zona==5) && coupon=="NOJADO")
+      {
+        descuento =  precioInicial*.10;
+        precioFinal = precioInicial-descuento;
+      }
+      else
+      {
+        precioFinal = precioInicial;
+      }
+
+      const InfoDescuento = {
+        zona:zona,
+        precioInicial:precioInicial,
+        metodoDePago:metodoDePago,
+        coupon:coupon,
+        envioGratis:envioGratis,
+        precioFinal:precioFinal
+      };
+
+      return InfoDescuento;
+    }
+    /*---------------------------------------------------------------*/
+    /*---------------------------------------------------------------*/
     @get('/coupons/descuentoZona1y2/{Zona}&{PrecioInicial}&{MetodoDePago}&{Coupon}')
     async DescuentoZona1y2(
       @param.path.number('Zona') Zona: number,
