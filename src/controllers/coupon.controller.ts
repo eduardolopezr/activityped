@@ -11,8 +11,26 @@ import {
   getModelSchemaRef, param, patch, post, put, requestBody,
   response
 } from '@loopback/rest';
+import * as Sentry from "@sentry/node";
+import {Integrations} from "@sentry/tracing";
 import {Coupon} from '../models';
 import {CouponRepository} from '../repositories';
+
+Sentry.init({
+  dsn: "https://0ad992cfa5d24b919b0768554e7a0c6c@o1059754.ingest.sentry.io/6048622",
+  integrations: [new Integrations.BrowserTracing()],
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+});
+const transaction = Sentry.startTransaction({
+  op: "test",
+  name: "My First Test Transaction",
+});
+
+
 export class CouponController {
   constructor(
     /*@inject('service.serviceb')
@@ -21,6 +39,7 @@ export class CouponController {
     public couponRepository : CouponRepository,
   ) {}
     /*---------------------------------------------------------------*/
+
     @get('/coupons/descuentoPorZona/{zona}&{precioInicial}&{metodoDePago}&{coupon}')
     async DescuentoPorZona(
       @param.path.number('zona') zona: number,
@@ -28,205 +47,71 @@ export class CouponController {
       @param.path.string('metodoDePago') metodoDePago: string,
       @param.path.string('coupon') coupon: string
     ): Promise<Object> {
+      try {
+        let descuento =0;
+        let precioFinal;
+        let envioGratis =false;
+        if(precioInicial>10000)
+        {
+          envioGratis =true;
+        }
 
-      let descuento =0;
-      let precioFinal =0;
-      let envioGratis =false;
-      if(precioInicial>10000)
-      {
-        envioGratis =true;
+        if((zona==1||zona==2) && metodoDePago=="paypal" && coupon=="MASTER20")
+        {
+          descuento =  precioInicial*.15;
+          precioFinal = precioInicial-descuento;
+        }
+        else if((zona==1||zona==2) && metodoDePago=="mastercard" && coupon=="MASTER20")
+        {
+          descuento =  precioInicial*.20;
+          precioFinal = precioInicial-descuento;
+        }
+        else if(zona==5 && metodoDePago=="mastercard")
+        {
+          descuento =  precioInicial*.10;
+          precioFinal = precioInicial-descuento;
+        }
+        else if(zona==3 && metodoDePago=="visa" && precioInicial>4000)
+        {
+          descuento =  precioInicial*.15;
+          precioFinal = precioInicial-descuento;
+        }
+        else if(zona==4 && metodoDePago=="mastercard" && precioInicial>3000)
+        {
+          envioGratis=true;
+        }
+        else if((zona==1||zona==2||zona==3) && (metodoDePago=="paypal"||metodoDePago=="mastercard") && coupon=="PERRITOFELI")
+        {
+          descuento =  precioInicial*.15;
+          precioFinal = precioInicial-descuento;
+        }
+        else if((zona==4||zona==5) && coupon=="NOJADO")
+        {
+          descuento =  precioInicial*.10;
+          precioFinal = precioInicial-descuento;
+        }
+        else
+        {
+          precioFinal = precioInicial;
+        }
+
+        const InfoDescuento = {
+          zona:zona,
+          precioInicial:precioInicial,
+          metodoDePago:metodoDePago,
+          coupon:coupon,
+          envioGratis:envioGratis,
+          precioFinal:precioFinal
+        };
+        console.log(InfoDescuento);
+        return InfoDescuento;
+      } catch (e) {
+        Sentry.captureException(e);
+        return {e:e};
       }
 
-      if((zona==1||zona==2) && metodoDePago=="paypal" && coupon=="MASTER20")
-      {
-        descuento =  precioInicial*.15;
-        precioFinal = precioInicial-descuento;
-      }
-      else if((zona==1||zona==2) && metodoDePago=="mastercard" && coupon=="MASTER20")
-      {
-        descuento =  precioInicial*.20;
-        precioFinal = precioInicial-descuento;
-      }
-      else if(zona==5 && metodoDePago=="mastercard")
-      {
-        descuento =  precioInicial*.10;
-        precioFinal = precioInicial-descuento;
-      }
-      else if(zona==3 && metodoDePago=="visa" && precioInicial>4000)
-      {
-        descuento =  precioInicial*.15;
-        precioFinal = precioInicial-descuento;
-      }
-      else if(zona==4 && metodoDePago=="mastercard" && precioInicial>3000)
-      {
-        envioGratis=true;
-      }
-      else if((zona==1||zona==2||zona==3) && (metodoDePago=="paypal"||metodoDePago=="mastercard") && coupon=="PERRITOFELI")
-      {
-        descuento =  precioInicial*.15;
-        precioFinal = precioInicial-descuento;
-      }
-      else if((zona==4||zona==5) && coupon=="NOJADO")
-      {
-        descuento =  precioInicial*.10;
-        precioFinal = precioInicial-descuento;
-      }
-      else
-      {
-        precioFinal = precioInicial;
-      }
-
-      const InfoDescuento = {
-        zona:zona,
-        precioInicial:precioInicial,
-        metodoDePago:metodoDePago,
-        coupon:coupon,
-        envioGratis:envioGratis,
-        precioFinal:precioFinal
-      };
-
-      return InfoDescuento;
-    }
-    /*---------------------------------------------------------------*/
-    /*
-    @get('/coupons/descuentoZona1y2/{Zona}&{PrecioInicial}&{MetodoDePago}&{Coupon}')
-    async DescuentoZona1y2(
-      @param.path.number('Zona') Zona: number,
-      @param.path.number('PrecioInicial') PrecioInicial: number,
-      @param.path.string('MetodoDePago') MetodoDePago: string,
-      @param.path.string('Coupon') Coupon: string
-    ): Promise<Number> {
-
-      var descuento =0;
-      var precio =PrecioInicial;
-      var precioFinal =0;
-
-      if((Zona==1||Zona==2) && MetodoDePago=="paypal" && Coupon=="MASTER20")
-      {
-        descuento =  precio*.15;
-        precioFinal = precio-descuento;
-      }
-      else if((Zona==1||Zona==2) && MetodoDePago=="mastercard" && Coupon=="MASTER20")
-      {
-        descuento =  precio*.20;
-        precioFinal = precio-descuento;
-      }
-      else
-      {
-        precioFinal = precio;
-      }
-
-      return precioFinal;
-    }
-    @get('/coupons/descuentoZona5/{Zona}&{PrecioInicial}&{MetodoDePago}')
-    async DescuentoZona5(
-      @param.path.number('Zona') Zona: number,
-      @param.path.number('PrecioInicial') PrecioInicial: number,
-      @param.path.string('MetodoDePago') MetodoDePago: string
-    ): Promise<Number> {
-
-      var descuento =0;
-      var precio =PrecioInicial;
-      var precioFinal =0;
-
-      if(Zona==5 && MetodoDePago=="mastercard")
-      {
-        descuento =  precio*.10;
-        precioFinal = precio-descuento;
-      }
-      else
-      {
-        precioFinal = precio;
-      }
-
-      return precioFinal;
-    }
-    @get('/coupons/descuentoZona3/{Zona}&{PrecioInicial}&{MetodoDePago}')
-    async DescuentoZona3(
-      @param.path.number('Zona') Zona: number,
-      @param.path.number('PrecioInicial') PrecioInicial: number,
-      @param.path.string('MetodoDePago') MetodoDePago: string
-    ): Promise<Number> {
-
-      var descuento =0;
-      var precio =PrecioInicial;
-      var precioFinal =0;
-
-      if(Zona==3 && MetodoDePago=="visa" && PrecioInicial>4000)
-      {
-        descuento =  precio*.15;
-        precioFinal = precio-descuento;
-      }
-      else
-      {
-        precioFinal = precio;
-      }
-
-      return precioFinal;
-    }
-    @get('/coupons/envioGratisZona4/{Zona}&{PrecioInicial}&{MetodoDePago}')
-    async EnvioGratisZona4(
-      @param.path.number('Zona') Zona: number,
-      @param.path.number('PrecioInicial') PrecioInicial: number,
-      @param.path.string('MetodoDePago') MetodoDePago: string
-    ): Promise<Boolean> {
-
-      var envioGratis=false;
-
-      if(Zona==4 && MetodoDePago=="mastercard" && PrecioInicial>3000)
-      {
-        envioGratis=true;
-      }
-
-      return envioGratis;
-    }
-    @get('/coupons/envioGratis/{Zona}&{PrecioInicial}')
-    async envioGratis (
-      @param.path.number('Zona') Zona: number,
-      @param.path.number('PrecioInicial') PrecioInicial: number,
-      @param.path.string('MetodoDePago') MetodoDePago: string
-    ): Promise<Boolean> {
-
-      var envioGratis=false;
-
-      if(PrecioInicial>10000)
-      {
-        envioGratis=true;
-      }
-
-      return envioGratis;
     }
 
-    @get('/coupons/descuentoPerritoFeliNojado/{Zona}&{PrecioInicial}&{MetodoDePago}&{Coupon}')
-    async DescuentoPerritoFeliNojado(
-      @param.path.number('Zona') Zona: number,
-      @param.path.number('PrecioInicial') PrecioInicial: number,
-      @param.path.string('MetodoDePago') MetodoDePago: string,
-      @param.path.string('Coupon') Coupon: string
-    ): Promise<Number> {
-
-      var descuento =0;
-      var precio =PrecioInicial;
-      var precioFinal =0;
-
-      if((Zona==1||Zona==2||Zona==3) && (MetodoDePago=="paypal"||MetodoDePago=="mastercard") && Coupon=="PERRITOFELI")
-      {
-        descuento =  precio*.15;
-        precioFinal = precio-descuento;
-      }
-      else if((Zona==4||Zona==5) && Coupon=="NOJADO")
-      {
-        descuento =  precio*.10;
-        precioFinal = precio-descuento;
-      }
-      else
-      {
-        precioFinal = precio;
-      }
-
-      return precioFinal;
-    }
-    */
 
   @post('/coupons')
   @response(200, {
