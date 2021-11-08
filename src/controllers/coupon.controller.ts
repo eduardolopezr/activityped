@@ -1,3 +1,4 @@
+import {inject} from '@loopback/context';
 import {
   Count,
   CountSchema,
@@ -15,6 +16,7 @@ import * as Sentry from "@sentry/node";
 import {Integrations} from "@sentry/tracing";
 import {Coupon} from '../models';
 import {CouponRepository} from '../repositories';
+import {Servicea} from '../services';
 
 Sentry.init({
   dsn: "https://0ad992cfa5d24b919b0768554e7a0c6c@o1059754.ingest.sentry.io/6048622",
@@ -37,6 +39,9 @@ export class CouponController {
     protected serviceb:Serviceb,*/
     @repository(CouponRepository)
     public couponRepository : CouponRepository,
+
+    @inject('services.servicea')
+    protected servicea: Servicea
   ) {}
     /*---------------------------------------------------------------*/
 
@@ -45,9 +50,11 @@ export class CouponController {
       @param.path.number('zona') zona: number,
       @param.path.number('precioInicial') precioInicial: number,
       @param.path.string('metodoDePago') metodoDePago: string,
-      @param.path.string('coupon') coupon: string
+      @param.path.string('coupon') coupon: string,
+      @param.path.string('postalcode') postalcode: string,
     ): Promise<Object> {
       try {
+        let getprice = await this.servicea.getpirce("postalcode");
         let descuento =0;
         let precioFinal;
         let envioGratis =false;
@@ -104,6 +111,7 @@ export class CouponController {
           precioFinal:precioFinal
         };
         console.log(InfoDescuento);
+        console.log(postalcode);
         return InfoDescuento;
       } catch (e) {
         Sentry.captureException(e);
