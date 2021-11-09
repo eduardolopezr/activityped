@@ -26,7 +26,7 @@ export class Coupon extends Entity {
   nombreCoupon: string;
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   metodoPago: string;
   @property({
