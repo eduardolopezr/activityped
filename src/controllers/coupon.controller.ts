@@ -50,8 +50,8 @@ export class CouponController {
       @param.path.number('zona') zona: number,
       @param.path.number('precioInicial') precioInicial: number,
       @param.path.string('metodoDePago') metodoDePago: string,
-      @param.path.string('coupon') coupon: string,
-      @param.path.string('postalcode') postalcode: string,
+      @param.path.string('coupon') coupon: string
+      //@param.path.string('postalcode') postalcode: string,
     ): Promise<Object> {
       try {
         let getprice = await this.servicea.getpirce("postalcode");
