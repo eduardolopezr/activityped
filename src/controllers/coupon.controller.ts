@@ -52,7 +52,7 @@ export class CouponController {
       //@param.path.string('postalcode') postalcode: string,
     ): Promise<Object> {
       try {
-        let getprice = await this.servicea.getpirce("postalcode");
+        //let getprice = await this.servicea.getpirce("postalcode");
         let descuento =0;
         let precioFinal;
         let envioGratis =false;
