@@ -1,4 +1,3 @@
-import {inject} from '@loopback/context';
 import {
   Count,
   CountSchema,
@@ -16,7 +15,6 @@ import * as Sentry from "@sentry/node";
 import {Integrations} from "@sentry/tracing";
 import {Coupon} from '../models';
 import {CouponRepository} from '../repositories';
-import {Servicea} from '../services';
 
 Sentry.init({
   dsn: "https://0ad992cfa5d24b919b0768554e7a0c6c@o1059754.ingest.sentry.io/6048622",
@@ -40,8 +38,8 @@ export class CouponController {
     @repository(CouponRepository)
     public couponRepository : CouponRepository,
 
-    @inject('services.servicea')
-    protected servicea: Servicea
+    //@inject('services.servicea')
+    //protected servicea: Servicea
   ) {}
     /*---------------------------------------------------------------*/
 
