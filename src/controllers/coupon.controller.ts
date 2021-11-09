@@ -111,7 +111,7 @@ export class CouponController {
           precioFinal:precioFinal
         };
         console.log(InfoDescuento);
-        console.log(postalcode);
+        //console.log(postalcode);
         return InfoDescuento;
       } catch (e) {
         Sentry.captureException(e);
